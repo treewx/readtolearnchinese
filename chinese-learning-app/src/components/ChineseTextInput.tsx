@@ -6,6 +6,7 @@ import { useVocabulary } from '../contexts/VocabularyContext';
 import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
 import WordTooltip from './WordTooltip';
 import SpeechControls from './SpeechControls';
+import TopicGenerator from './TopicGenerator';
 
 interface SegmentedWord {
   word: string;
@@ -135,8 +136,18 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
     saveWord(word, level);
   };
 
+  const handleGeneratedText = (generatedText: string) => {
+    setInputText(generatedText);
+    // Auto-process the generated text
+    setTimeout(() => {
+      handleSegmentAndConvert();
+    }, 500);
+  };
+
   return (
     <div className="chinese-text-input">
+      <TopicGenerator onGeneratedText={handleGeneratedText} />
+      
       <div className="input-section">
         <h2>Enter Chinese Text</h2>
         <textarea

@@ -90,6 +90,10 @@
 .speech-button.display-settings {
   background-color: #673AB7;
   color: white;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .speech-button.display-settings:hover {

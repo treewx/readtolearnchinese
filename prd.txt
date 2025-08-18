@@ -1,0 +1,61 @@
+Product Requirements Document: "Read To Learn Chinese" App
+Overview
+
+Purpose:
+A web-based tool that allows users to input Chinese text, segment it into words, and display Pinyin with tones and English translations. Users can save words to vocabulary lists and track their learning progress.
+
+Core Features and Functionality
+
+1. Text Input and Display
+
+Task 1.1: Provide a text field where users can paste Chinese characters.
+
+Subtask 1.1.1: Allow editing of the text field so users can input or modify characters.
+
+Subtask 1.1.2: Add a "Segment and Convert" button to initiate processing.
+
+2. Word Segmentation
+
+Task 2.1: Use a segmentation algorithm (e.g., Jieba) to split the Chinese text into word segments.
+
+Subtask 2.1.1: Integrate the Jieba library or a similar tool for segmentation.
+
+Subtask 2.1.2: Ensure that segmentation happens before fetching Pinyin and translations.
+
+3. Pinyin and Translation Fetching
+
+Task 3.1: For each word segment, fetch the Pinyin (with tone marks) and English translation.
+
+Subtask 3.1.1: Implement a script or API call to retrieve Pinyin and tones.
+
+Subtask 3.1.2: Implement a script or API call to retrieve concise English translations.
+
+4. Display and Highlighting
+
+Task 4.1: Display the segmented Chinese text with Pinyin and English translations on hover.
+
+Subtask 4.1.1: Show a pop-up on hover with the character, Pinyin, and English meaning.
+
+Subtask 4.1.2: Add a "Save" button in the pop-up to add words to vocabulary lists.
+
+Task 4.2: Highlight words that are saved in vocabulary lists.
+
+Subtask 4.2.1: Use different highlight styles for Level 1, Level 2, and Level 3 words.
+
+Subtask 4.2.2: Only highlight words that have been saved; leave known words unhighlighted.
+
+5. Vocabulary Management
+
+Task 5.1: Allow users to categorize saved words into Level 1, Level 2, or Level 3 lists.
+
+Subtask 5.1.1: Include controls in the pop-up to set or change the level of a word.
+
+Subtask 5.1.2: Provide a UI section to view and manage vocabulary lists, including deleting words.
+
+6. Read-Aloud Feature
+
+Task 6.1: Add a button to toggle the read-aloud function for the Chinese text.
+
+Subtask 6.1.1: If read-aloud is activated, pronounce each word segment in Chinese.
+
+Subtask 6.1.2: If read-aloud is deactivated, skip the pronunciation.

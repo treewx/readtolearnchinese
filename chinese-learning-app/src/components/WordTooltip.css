@@ -1,0 +1,161 @@
+.word-tooltip {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  max-width: 280px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 1px solid #e0e0e0;
+}
+
+.tooltip-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.word-and-speech {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.tooltip-word {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  font-family: 'Microsoft YaHei', 'SimSun', sans-serif;
+  margin-bottom: 4px;
+}
+
+.tooltip-pinyin {
+  font-size: 16px;
+  color: #e91e63;
+  font-weight: 600;
+}
+
+.tooltip-translation {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.tooltip-actions {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+}
+
+.save-section {
+  margin-bottom: 12px;
+}
+
+.save-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.level-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.level-button {
+  padding: 6px 12px;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.level-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.level-button.level-1 {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.level-button.level-1.active,
+.level-button.level-1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.level-button.level-2 {
+  border-color: #FF9800;
+  color: #FF9800;
+}
+
+.level-button.level-2.active,
+.level-button.level-2:hover {
+  background-color: #FF9800;
+  color: white;
+}
+
+.level-button.level-3 {
+  border-color: #F44336;
+  color: #F44336;
+}
+
+.level-button.level-3.active,
+.level-button.level-3:hover {
+  background-color: #F44336;
+  color: white;
+}
+
+.saved-indicator {
+  text-align: center;
+  font-size: 12px;
+  color: #4CAF50;
+  font-weight: 600;
+  padding: 4px;
+  background-color: #e8f5e8;
+  border-radius: 4px;
+}
+
+.speak-word-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.speak-word-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.speak-word-btn.speaking {
+  animation: pulse 1s infinite;
+  background-color: #e3f2fd;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

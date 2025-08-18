@@ -2,7 +2,7 @@
   "name": "chinese-learning-app",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://your-username.github.io/learnchinese",
+  "homepage": "https://treewx.github.io/readtolearnchinese",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.7.0",

@@ -6,7 +6,6 @@ import { useVocabulary } from '../contexts/VocabularyContext';
 import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
 import WordTooltip from './WordTooltip';
 import SpeechControls from './SpeechControls';
-import DisplaySettings from './DisplaySettings';
 
 interface SegmentedWord {
   word: string;
@@ -154,8 +153,6 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
         <div className="output-section">
           <h2>Segmented Text {settings.practiceMode !== 'normal' && <span className="practice-mode-indicator">({settings.practiceMode.replace('-', ' ')} mode)</span>}</h2>
           <p className="instruction-text">Hover over words to see detailed information and save to vocabulary</p>
-          
-          <DisplaySettings />
           
           <SpeechControls 
             text={inputText}

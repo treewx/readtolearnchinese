@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useSpeech } from '../hooks/useSpeech';
+import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
+import DisplaySettings from './DisplaySettings';
 import './SpeechControls.css';
 
 interface SpeechControlsProps {
@@ -10,6 +12,7 @@ interface SpeechControlsProps {
 
 const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className = '' }) => {
   const { speak, stop, isSpeaking, isSupported, voices, selectedVoice, setSelectedVoice } = useSpeech();
+  const { showSettings, setShowSettings } = useDisplaySettings();
   const [showVoiceSelector, setShowVoiceSelector] = useState<boolean>(false);
   const [speechRate, setSpeechRate] = useState<number>(0.8);
 
@@ -113,6 +116,15 @@ const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className 
           <span className="icon">⚙️</span>
           Settings
         </button>
+
+        <button 
+          className="speech-button display-settings"
+          onClick={() => setShowSettings(!showSettings)}
+          title="Display settings"
+        >
+          <span className="icon">⭐</span>
+          Display Settings
+        </button>
       </div>
 
       {showVoiceSelector && (
@@ -164,6 +176,12 @@ const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className 
               <p>Selected: {selectedVoice.name} ({selectedVoice.lang})</p>
             </div>
           )}
+        </div>
+      )}
+
+      {showSettings && (
+        <div className="display-settings-panel">
+          <DisplaySettings />
         </div>
       )}
     </div>

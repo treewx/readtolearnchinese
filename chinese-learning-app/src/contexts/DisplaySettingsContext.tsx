@@ -12,6 +12,8 @@ interface DisplaySettingsContextType {
   updateSettings: (newSettings: Partial<DisplaySettings>) => void;
   setPracticeMode: (mode: DisplaySettings['practiceMode']) => void;
   resetSettings: () => void;
+  showSettings: boolean;
+  setShowSettings: (show: boolean) => void;
 }
 
 const defaultSettings: DisplaySettings = {
@@ -37,6 +39,7 @@ interface DisplaySettingsProviderProps {
 
 export const DisplaySettingsProvider: React.FC<DisplaySettingsProviderProps> = ({ children }) => {
   const [settings, setSettings] = useState<DisplaySettings>(defaultSettings);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   // Load settings from localStorage on component mount
   useEffect(() => {
@@ -108,7 +111,9 @@ export const DisplaySettingsProvider: React.FC<DisplaySettingsProviderProps> = (
     settings,
     updateSettings,
     setPracticeMode,
-    resetSettings
+    resetSettings,
+    showSettings,
+    setShowSettings
   };
 
   return (

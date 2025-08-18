@@ -32,6 +32,7 @@
 .speech-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 8px 16px;
   border: none;
@@ -41,6 +42,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  min-height: 40px;
+  box-sizing: border-box;
 }
 
 .speech-button .icon {
@@ -52,7 +55,7 @@
   color: white;
 }
 
-.speech-button.speak-text:hover {
+.speech-button.speak-text:hover:not(:disabled) {
   background-color: #45a049;
   transform: translateY(-1px);
 }
@@ -67,7 +70,7 @@
   color: white;
 }
 
-.speech-button.speak-words:hover {
+.speech-button.speak-words:hover:not(:disabled) {
   background-color: #1976D2;
   transform: translateY(-1px);
 }
@@ -82,7 +85,7 @@
   color: white;
 }
 
-.speech-button.settings:hover {
+.speech-button.settings:hover:not(:disabled) {
   background-color: #F57C00;
   transform: translateY(-1px);
 }
@@ -90,13 +93,9 @@
 .speech-button.display-settings {
   background-color: #673AB7;
   color: white;
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
 }
 
-.speech-button.display-settings:hover {
+.speech-button.display-settings:hover:not(:disabled) {
   background-color: #512DA8;
   transform: translateY(-1px);
 }

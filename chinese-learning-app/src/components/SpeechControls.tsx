@@ -65,7 +65,7 @@ const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className 
 
   return (
     <div className={`speech-controls ${className}`}>
-      <h3 className="speech-title">🔊 Text-to-Speech Controls</h3>
+      <h3 className="speech-title">🔊 Controls</h3>
       <div className="speech-buttons">
         {text && (
           <button 

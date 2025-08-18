@@ -100,19 +100,19 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
     const rect = event.currentTarget.getBoundingClientRect();
     const position = {
       x: rect.left + rect.width / 2,
-      y: rect.top - 10
+      y: rect.top - 5  // Reduced gap from 10px to 5px for easier mouse movement
     };
     setTooltipPosition(position);
     setTooltipVisible(true);
   };
 
   const handleWordLeave = () => {
-    // Add a delay before hiding tooltip to allow clicking
+    // Add a longer delay before hiding tooltip to allow clicking
     const timeout = setTimeout(() => {
       setHoveredWord(null);
       setTooltipPosition(null);
       setTooltipVisible(false);
-    }, 300); // 300ms delay
+    }, 800); // 800ms delay - much more time to move mouse to tooltip
     
     setHoverTimeout(timeout);
   };
@@ -241,7 +241,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
           style={{
             position: 'fixed',
             left: Math.max(10, Math.min(tooltipPosition.x - 140, window.innerWidth - 290)),
-            top: Math.max(10, tooltipPosition.y - 220),
+            top: Math.max(10, tooltipPosition.y - 200), // Reduced from 220 to 200 for smaller gap
             zIndex: 1000,
             pointerEvents: 'auto'
           }}

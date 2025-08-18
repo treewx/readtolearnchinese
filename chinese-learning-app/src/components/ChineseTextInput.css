@@ -238,13 +238,25 @@
 }
 
 .tooltip-overlay {
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.tooltip-overlay::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 10px;
+  background: transparent;
+  pointer-events: auto;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;

@@ -45,6 +45,8 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
       
       // Get Pinyin and translations for each segment
       const words = segments.map(seg => seg.word);
+      console.log(`Processing ${words.length} words with dynamic translation...`);
+      
       const wordsInfo = await getWordsInfo(words);
       
       // Combine segmentation with word info
@@ -54,9 +56,22 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
       }));
       
       setSegmentedWords(segmentsWithInfo);
+      console.log('Translation complete! API translations cached for future use.');
     } catch (error) {
       console.error('Error processing text:', error);
-      alert('Error processing text. Please try again.');
+      alert('Error processing text. Some translations may have failed, but the text has been segmented.');
+      // Still show the segmented words even if some translations failed
+      const preprocessedText = preprocessText(inputText);
+      const segments = segmentChineseText(preprocessedText);
+      const fallbackSegments: SegmentedWord[] = segments.map(segment => ({
+        ...segment,
+        wordInfo: {
+          word: segment.word,
+          pinyin: 'Loading...',
+          translation: 'Translation failed'
+        }
+      }));
+      setSegmentedWords(fallbackSegments);
     } finally {
       setIsProcessing(false);
     }
@@ -128,7 +143,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
           className="text-input"
           value={inputText}
           onChange={handleInputChange}
-          placeholder="Enter or paste Chinese text here... (Example: 我今天去学校学习中文)"
+          placeholder="Enter or paste ANY Chinese text here... App will automatically translate unknown words using live translation APIs!"
           rows={6}
           cols={50}
         />
@@ -138,7 +153,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
             onClick={handleSegmentAndConvert}
             disabled={isProcessing || !inputText.trim()}
           >
-            {isProcessing ? 'Processing...' : 'Segment and Convert'}
+            {isProcessing ? 'Translating with API...' : 'Segment and Translate'}
           </button>
           <button 
             className="clear-button secondary-button"
@@ -152,7 +167,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
       {segmentedWords.length > 0 && (
         <div className="output-section">
           <h2>Segmented Text {settings.practiceMode !== 'normal' && <span className="practice-mode-indicator">({settings.practiceMode.replace('-', ' ')} mode)</span>}</h2>
-          <p className="instruction-text">Hover over words to see detailed information and save to vocabulary</p>
+          <p className="instruction-text">Hover over words to see detailed information and save to vocabulary • Translations powered by real-time API</p>
           
           <SpeechControls 
             text={inputText}

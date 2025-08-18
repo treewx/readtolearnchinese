@@ -1,5 +1,12 @@
 import { pinyin } from 'pinyin-pro';
 
+// Translation cache to avoid repeated API calls
+const translationCache: { [key: string]: string } = {};
+
+// Rate limiting for API calls
+let lastAPICall = 0;
+const API_RATE_LIMIT_MS = 500; // 500ms between API calls
+
 // Basic dictionary for common Chinese words with English translations
 const chineseDict: { [key: string]: string } = {
   // Pronouns
@@ -402,7 +409,7 @@ export interface WordInfo {
   translation: string;
 }
 
-export function getWordInfo(word: string): WordInfo {
+export async function getWordInfo(word: string): Promise<WordInfo> {
   // Get Pinyin using pinyin-pro library
   const pinyinResult = pinyin(word, { 
     toneType: 'symbol',
@@ -412,14 +419,88 @@ export function getWordInfo(word: string): WordInfo {
   
   const pinyinString = pinyinResult.join(' ');
   
-  // Get translation from local dictionary
-  const translation = chineseDict[word] || getCharacterTranslations(word);
+  // Get translation - first check local dictionary
+  let translation = chineseDict[word];
+  
+  // If not in dictionary, try API translation
+  if (!translation) {
+    translation = await translateWithAPI(word);
+  }
   
   return {
     word,
     pinyin: pinyinString,
     translation
   };
+}
+
+// Translation API service
+async function translateWithAPI(word: string): Promise<string> {
+  // Check cache first
+  if (translationCache[word]) {
+    return translationCache[word];
+  }
+
+  // Rate limiting
+  const now = Date.now();
+  const timeSinceLastCall = now - lastAPICall;
+  if (timeSinceLastCall < API_RATE_LIMIT_MS) {
+    await new Promise(resolve => setTimeout(resolve, API_RATE_LIMIT_MS - timeSinceLastCall));
+  }
+  lastAPICall = Date.now();
+
+  try {
+    // Try MyMemory Translation API (free, no API key required)
+    const response = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=zh|en`
+    );
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.responseStatus === 200 && data.responseData?.translatedText) {
+        const translation = data.responseData.translatedText;
+        // Filter out obviously bad translations
+        if (translation.toLowerCase() !== word.toLowerCase() && 
+            !translation.includes('MYMEMORY WARNING') &&
+            translation.length > 0) {
+          // Cache the successful translation
+          translationCache[word] = translation;
+          return translation;
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('MyMemory API failed:', error);
+  }
+
+  try {
+    // Fallback to LibreTranslate public instance
+    const response = await fetch('https://libretranslate.de/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        q: word,
+        source: 'zh',
+        target: 'en',
+      }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.translatedText && data.translatedText.toLowerCase() !== word.toLowerCase()) {
+        // Cache the successful translation
+        translationCache[word] = data.translatedText;
+        return data.translatedText;
+      }
+    }
+  } catch (error) {
+    console.warn('LibreTranslate API failed:', error);
+  }
+
+  // Final fallback to character-by-character translation
+  return getCharacterTranslations(word);
 }
 
 // For unknown words, try to provide character-by-character translation
@@ -443,11 +524,27 @@ function getCharacterTranslations(word: string): string {
 
 // Batch processing for multiple words
 export async function getWordsInfo(words: string[]): Promise<WordInfo[]> {
-  return new Promise((resolve) => {
-    // Simulate async processing
-    setTimeout(() => {
-      const results = words.map(word => getWordInfo(word));
-      resolve(results);
-    }, 100);
-  });
+  try {
+    // Process words with proper async handling
+    const results = await Promise.all(
+      words.map(word => getWordInfo(word))
+    );
+    return results;
+  } catch (error) {
+    console.error('Error in batch word processing:', error);
+    // Fallback to synchronous processing with static dictionary only
+    return words.map(word => {
+      const pinyinResult = pinyin(word, { 
+        toneType: 'symbol',
+        type: 'array',
+        nonZh: 'consecutive'
+      });
+      
+      return {
+        word,
+        pinyin: pinyinResult.join(' '),
+        translation: chineseDict[word] || 'No translation available'
+      };
+    });
+  }
 }

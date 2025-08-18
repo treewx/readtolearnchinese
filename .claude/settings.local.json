@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(task-master init:*)",
+      "Bash(task-master parse-prd:*)",
+      "Bash(cp:*)",
+      "Bash(task-master list:*)",
+      "Bash(npx create-react-app:*)",
+      "Bash(npm start)",
+      "Bash(mkdir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run deploy:*)",
+      "Bash(grep:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

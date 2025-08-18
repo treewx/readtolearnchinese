@@ -1,0 +1,146 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository",
+        "description": "Initialize the project repository and set up the development environment.",
+        "details": "Create a new repository on GitHub. Clone the repository locally and set up the project structure using a modern JavaScript framework like React. Install necessary dependencies such as React, Axios for API calls, and any UI libraries needed for styling.",
+        "testStrategy": "Verify that the repository is accessible and that the initial project setup runs without errors. Ensure that the basic React app renders correctly in the browser.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Text Input and Display",
+        "description": "Create a text input field for users to enter or paste Chinese characters.",
+        "details": "Develop a React component that includes a text input field. Add functionality to allow users to edit the text. Implement a 'Segment and Convert' button that triggers the segmentation process.",
+        "testStrategy": "Test the text input field to ensure it accepts Chinese characters and allows editing. Verify that the 'Segment and Convert' button is clickable and triggers the correct function.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Integrate Word Segmentation",
+        "description": "Use Jieba or a similar library to segment Chinese text into words.",
+        "details": "Install and integrate the Jieba library in the project. Create a function that takes the input text and returns segmented words. Ensure this function is called when the 'Segment and Convert' button is pressed.",
+        "testStrategy": "Write unit tests to verify that the segmentation function correctly splits Chinese text into words. Test with various input cases to ensure accuracy.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Fetch Pinyin and Translations",
+        "description": "Retrieve Pinyin with tones and English translations for each word segment.",
+        "details": "Implement API calls or scripts to fetch Pinyin and translations for segmented words. Use a reliable API or dataset for Chinese language processing.",
+        "testStrategy": "Test API calls to ensure they return correct Pinyin and translations. Validate the data against known examples to ensure accuracy.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Display Segmented Text with Pinyin and Translations",
+        "description": "Show segmented text with Pinyin and translations on hover.",
+        "details": "Develop a UI component that displays segmented text. Implement hover functionality to show a pop-up with Pinyin and English translations. Add a 'Save' button in the pop-up.",
+        "testStrategy": "Test the UI to ensure that hovering over text displays the correct pop-up information. Verify that the 'Save' button is functional and triggers the correct action.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Highlight Saved Words",
+        "description": "Highlight words saved in vocabulary lists with different styles based on their level.",
+        "details": "Implement a highlighting feature that changes the style of words based on their level (Level 1, 2, or 3). Ensure that only saved words are highlighted.",
+        "testStrategy": "Test the highlighting functionality to ensure that words are highlighted correctly based on their level. Verify that unsaved words are not highlighted.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Vocabulary Management",
+        "description": "Allow users to manage vocabulary lists and categorize words into levels.",
+        "details": "Create a UI section for managing vocabulary lists. Implement functionality to add, delete, and categorize words into Level 1, 2, or 3. Provide controls in the pop-up for setting word levels.",
+        "testStrategy": "Test the vocabulary management UI to ensure users can add, delete, and categorize words. Verify that changes are reflected in the highlighting feature.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Add Read-Aloud Feature",
+        "description": "Implement a read-aloud feature for the Chinese text.",
+        "details": "Integrate a text-to-speech library to pronounce Chinese text. Add a toggle button to activate or deactivate the read-aloud feature. Ensure that the pronunciation is accurate and clear.",
+        "testStrategy": "Test the read-aloud feature to ensure it pronounces text correctly. Verify that the toggle button works as expected, enabling and disabling the feature.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement User Authentication",
+        "description": "Set up user authentication to allow users to save their progress and vocabulary lists.",
+        "details": "Integrate a user authentication system using a service like Firebase or Auth0. Implement login, registration, and session management features.",
+        "testStrategy": "Test the authentication system to ensure users can register, log in, and maintain sessions. Verify that user data is securely stored and retrieved.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Deploy Application",
+        "description": "Deploy the application to a cloud platform for public access.",
+        "details": "Choose a cloud platform like AWS, Heroku, or Vercel for deployment. Set up continuous integration and deployment pipelines to automate the deployment process.",
+        "testStrategy": "Verify that the application is accessible online and functions correctly in a production environment. Test all features to ensure they work as expected post-deployment.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-18T00:05:33.499Z",
+      "updated": "2025-08-18T00:05:33.499Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

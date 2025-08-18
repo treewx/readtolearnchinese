@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/readtolearnchinese/static/css/main.a58bedb8.css",
+    "main.js": "/readtolearnchinese/static/js/main.9534c539.js",
+    "static/js/453.8353dd1d.chunk.js": "/readtolearnchinese/static/js/453.8353dd1d.chunk.js",
+    "index.html": "/readtolearnchinese/index.html",
+    "main.a58bedb8.css.map": "/readtolearnchinese/static/css/main.a58bedb8.css.map",
+    "main.9534c539.js.map": "/readtolearnchinese/static/js/main.9534c539.js.map",
+    "453.8353dd1d.chunk.js.map": "/readtolearnchinese/static/js/453.8353dd1d.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a58bedb8.css",
+    "static/js/main.9534c539.js"
+  ]
+}

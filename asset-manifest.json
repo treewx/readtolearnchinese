@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/readtolearnchinese/static/css/main.7d47e061.css",
-    "main.js": "/readtolearnchinese/static/js/main.356b7769.js",
+    "main.js": "/readtolearnchinese/static/js/main.6fbd2b63.js",
     "static/js/453.8353dd1d.chunk.js": "/readtolearnchinese/static/js/453.8353dd1d.chunk.js",
     "index.html": "/readtolearnchinese/index.html",
     "main.7d47e061.css.map": "/readtolearnchinese/static/css/main.7d47e061.css.map",
-    "main.356b7769.js.map": "/readtolearnchinese/static/js/main.356b7769.js.map",
+    "main.6fbd2b63.js.map": "/readtolearnchinese/static/js/main.6fbd2b63.js.map",
     "453.8353dd1d.chunk.js.map": "/readtolearnchinese/static/js/453.8353dd1d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7d47e061.css",
-    "static/js/main.356b7769.js"
+    "static/js/main.6fbd2b63.js"
   ]
 }

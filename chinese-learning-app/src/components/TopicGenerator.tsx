@@ -10,12 +10,34 @@ const TopicGenerator: React.FC<TopicGeneratorProps> = ({ onGeneratedText }) => {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [lastGenerated, setLastGenerated] = useState<string>('');
+  const [showApiKeyInput, setShowApiKeyInput] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState<string>('');
+
+  // Load API key from localStorage on mount
+  React.useEffect(() => {
+    const savedApiKey = localStorage.getItem('openai_api_key');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
+  // Save API key to localStorage when it changes
+  const handleApiKeyChange = (newApiKey: string) => {
+    setApiKey(newApiKey);
+    if (newApiKey.trim()) {
+      localStorage.setItem('openai_api_key', newApiKey);
+    } else {
+      localStorage.removeItem('openai_api_key');
+    }
+  };
 
   const generateChineseText = async (topic: string): Promise<string> => {
-    const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    // Try to get API key from environment variable (local dev) or state (hosted)
+    const envApiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    const activeApiKey = envApiKey || apiKey;
     
     // Check if API key is configured
-    if (!apiKey || apiKey.trim() === '') {
+    if (!activeApiKey || activeApiKey.trim() === '') {
       console.log('No OpenAI API key configured, using fallback generation');
       return generateFallbackText(topic);
     }
@@ -33,7 +55,7 @@ const TopicGenerator: React.FC<TopicGeneratorProps> = ({ onGeneratedText }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${activeApiKey}`
         },
         body: JSON.stringify({
           model: model,
@@ -252,16 +274,59 @@ const TopicGenerator: React.FC<TopicGeneratorProps> = ({ onGeneratedText }) => {
                 <small>Try different topics to see varied content!</small>
               </p>
             )}
-            <p className="debug-info">
-              <small>
-                🔧 API Status: {process.env.REACT_APP_OPENAI_API_KEY ? 
-                  '✅ OpenAI API key configured - using real AI generation!' : 
-                  '⚠️ No API key found - using fallback generation with random variations'
-                }
-                <br />
-                💡 To enable real AI: Add your OpenAI API key to the .env file
-              </small>
-            </p>
+            <div className="api-key-section">
+              <div className="api-status">
+                <small>
+                  🔧 API Status: {(process.env.REACT_APP_OPENAI_API_KEY || apiKey) ? 
+                    '✅ OpenAI API key configured - using real AI generation!' : 
+                    '⚠️ No API key found - using fallback generation'
+                  }
+                </small>
+              </div>
+              
+              <div className="api-key-controls">
+                <button 
+                  className="api-key-toggle"
+                  onClick={() => setShowApiKeyInput(!showApiKeyInput)}
+                  type="button"
+                >
+                  🔑 {showApiKeyInput ? 'Hide' : 'Setup'} API Key
+                </button>
+                
+                {showApiKeyInput && (
+                  <div className="api-key-input-section">
+                    <label htmlFor="api-key-input">
+                      <small>OpenAI API Key (saved locally in browser):</small>
+                    </label>
+                    <div className="api-key-input-group">
+                      <input
+                        id="api-key-input"
+                        type="password"
+                        value={apiKey}
+                        onChange={(e) => handleApiKeyChange(e.target.value)}
+                        placeholder="sk-..."
+                        className="api-key-input"
+                      />
+                      <button 
+                        className="clear-api-key"
+                        onClick={() => handleApiKeyChange('')}
+                        title="Clear API key"
+                        type="button"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                    <div className="api-key-info">
+                      <small>
+                        💡 Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI Platform</a>
+                        <br />
+                        🔒 Your API key is stored locally in your browser only
+                      </small>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -5,6 +5,8 @@ interface DisplaySettings {
   showPinyin: boolean;
   showTranslation: boolean;
   practiceMode: 'normal' | 'chinese-only' | 'no-translation' | 'characters-only';
+  tilePinyinSize: 'small' | 'medium' | 'large';
+  tileEnglishSize: 'small' | 'medium' | 'large';
 }
 
 interface DisplaySettingsContextType {
@@ -20,7 +22,9 @@ const defaultSettings: DisplaySettings = {
   showChinese: true,
   showPinyin: true,
   showTranslation: true,
-  practiceMode: 'normal'
+  practiceMode: 'normal',
+  tilePinyinSize: 'medium',
+  tileEnglishSize: 'medium'
 };
 
 const DisplaySettingsContext = createContext<DisplaySettingsContextType | undefined>(undefined);

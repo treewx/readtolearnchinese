@@ -7,6 +7,7 @@ import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
 import WordTooltip from './WordTooltip';
 import SpeechControls from './SpeechControls';
 import TopicGenerator from './TopicGenerator';
+import DisplaySettings from './DisplaySettings';
 
 interface SegmentedWord {
   word: string;
@@ -112,7 +113,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
       setHoveredWord(null);
       setTooltipPosition(null);
       setTooltipVisible(false);
-    }, 800); // 800ms delay - much more time to move mouse to tooltip
+    }, 1200); // 1200ms delay - even more time to move mouse to tooltip
     
     setHoverTimeout(timeout);
   };
@@ -172,6 +173,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
           >
             Clear
           </button>
+          <DisplaySettings />
         </div>
       </div>
 
@@ -204,10 +206,10 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
                   {segment.wordInfo && (
                     <div className="word-details">
                       {settings.showPinyin && (
-                        <div className="pinyin">{segment.wordInfo.pinyin}</div>
+                        <div className={`pinyin ${settings.tilePinyinSize}`}>{segment.wordInfo.pinyin}</div>
                       )}
                       {settings.showTranslation && (
-                        <div className="translation">{segment.wordInfo.translation}</div>
+                        <div className={`translation ${settings.tileEnglishSize}`}>{segment.wordInfo.translation}</div>
                       )}
                     </div>
                   )}

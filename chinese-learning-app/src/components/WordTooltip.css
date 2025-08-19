@@ -38,6 +38,7 @@
   font-weight: 600;
 }
 
+
 .tooltip-translation {
   font-size: 14px;
   color: #666;
@@ -45,6 +46,7 @@
   margin-bottom: 16px;
   text-align: center;
 }
+
 
 .tooltip-actions {
   border-top: 1px solid #f0f0f0;
@@ -70,15 +72,16 @@
 }
 
 .level-button {
-  padding: 6px 12px;
+  padding: 8px 16px;
   border: 2px solid #ddd;
   border-radius: 20px;
   background-color: white;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
+  min-width: 70px;
 }
 
 .level-button:hover {

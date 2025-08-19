@@ -1,18 +1,19 @@
 .display-settings {
   position: relative;
-  margin: 20px 0;
+  margin: 0;
+  display: inline-block;
 }
 
 .settings-toggle {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 12px 24px;
   background-color: #673AB7;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -150,6 +151,53 @@
   color: #555;
   font-size: 14px;
   font-weight: 600;
+}
+
+.size-controls {
+  margin-bottom: 20px;
+}
+
+.size-control-group h5 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.size-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 6px 0;
+}
+
+.size-control label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.size-control select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-width: 80px;
+}
+
+.size-control select:hover {
+  border-color: #673AB7;
+}
+
+.size-control select:focus {
+  outline: none;
+  border-color: #673AB7;
+  box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.1);
 }
 
 .toggle-controls {

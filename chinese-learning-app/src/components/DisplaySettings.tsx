@@ -80,6 +80,33 @@ const DisplaySettings: React.FC = () => {
 
           <div className="custom-settings">
             <h4>Custom Settings</h4>
+            <div className="size-controls">
+              <div className="size-control-group">
+                <h5>Text Sizes on Main Cards</h5>
+                <div className="size-control">
+                  <label>Pinyin Size:</label>
+                  <select
+                    value={settings.tilePinyinSize}
+                    onChange={(e) => updateSettings({ tilePinyinSize: e.target.value as 'small' | 'medium' | 'large' })}
+                  >
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                  </select>
+                </div>
+                <div className="size-control">
+                  <label>English Size:</label>
+                  <select
+                    value={settings.tileEnglishSize}
+                    onChange={(e) => updateSettings({ tileEnglishSize: e.target.value as 'small' | 'medium' | 'large' })}
+                  >
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <div className="toggle-controls">
               <label className="toggle-item">
                 <input

@@ -39,10 +39,19 @@ const VocabularyManager: React.FC = () => {
   };
 
   const exportVocabulary = () => {
-    const dataStr = JSON.stringify(vocabulary, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    // Convert vocabulary to Anki card format: English\tChinese (Pinyin)
+    const ankiCards = vocabulary.map(vocabWord => {
+      const translation = vocabWord.translation || 'No translation';
+      const chinese = vocabWord.word;
+      const pinyin = vocabWord.pinyin || 'No pinyin';
+      
+      // Format: English translation\tChinese (pinyin)
+      return `${translation}\t${chinese} (${pinyin})`;
+    }).join('\n');
     
-    const exportFileDefaultName = `chinese-vocabulary-${new Date().toISOString().split('T')[0]}.json`;
+    const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(ankiCards);
+    
+    const exportFileDefaultName = `chinese-vocabulary-anki-${new Date().toISOString().split('T')[0]}.txt`;
     
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -89,7 +98,7 @@ const VocabularyManager: React.FC = () => {
 
         <div className="action-buttons">
           <button className="export-button" onClick={exportVocabulary}>
-            Export Vocabulary
+            Export for Anki
           </button>
           <button 
             className={`clear-button ${showConfirmClear ? 'confirm' : ''}`}
@@ -133,6 +142,16 @@ const VocabularyManager: React.FC = () => {
                     ×
                   </button>
                 </div>
+                {vocabWord.pinyin && (
+                  <div className="word-pinyin">
+                    {vocabWord.pinyin}
+                  </div>
+                )}
+                {vocabWord.translation && (
+                  <div className="word-translation">
+                    {vocabWord.translation}
+                  </div>
+                )}
                 <div className="word-meta">
                   <span className="date-added">
                     Added: {new Date(vocabWord.dateAdded).toLocaleDateString()}

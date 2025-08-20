@@ -6,12 +6,24 @@ interface SpeechControlsProps {
   text?: string;
   words?: string[];
   className?: string;
+  onAutoSpeakChange?: (enabled: boolean) => void;
+  autoSpeakEnabled?: boolean;
 }
 
-const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className = '' }) => {
+const SpeechControls: React.FC<SpeechControlsProps> = ({ 
+  text, 
+  words, 
+  className = '', 
+  onAutoSpeakChange,
+  autoSpeakEnabled: propAutoSpeakEnabled 
+}) => {
   const { speak, stop, isSpeaking, isSupported, voices, selectedVoice, setSelectedVoice } = useSpeech();
   const [showVoiceSelector, setShowVoiceSelector] = useState<boolean>(false);
   const [speechRate, setSpeechRate] = useState<number>(0.8);
+  const [localAutoSpeakEnabled, setLocalAutoSpeakEnabled] = useState<boolean>(false);
+  
+  // Use prop value if provided, otherwise use local state
+  const autoSpeakEnabled = propAutoSpeakEnabled !== undefined ? propAutoSpeakEnabled : localAutoSpeakEnabled;
 
   if (!isSupported) {
     return (
@@ -104,6 +116,22 @@ const SpeechControls: React.FC<SpeechControlsProps> = ({ text, words, className 
             )}
           </button>
         )}
+
+        <button 
+          className={`speech-button auto-speak ${autoSpeakEnabled ? 'enabled' : 'disabled'}`}
+          onClick={() => {
+            const newValue = !autoSpeakEnabled;
+            if (onAutoSpeakChange) {
+              onAutoSpeakChange(newValue);
+            } else {
+              setLocalAutoSpeakEnabled(newValue);
+            }
+          }}
+          title={`Auto-speak words: ${autoSpeakEnabled ? 'ON' : 'OFF'}`}
+        >
+          <span className="icon">{autoSpeakEnabled ? '🔊' : '🔇'}</span>
+          Auto Speak: {autoSpeakEnabled ? 'ON' : 'OFF'}
+        </button>
 
         <button 
           className="speech-button settings"

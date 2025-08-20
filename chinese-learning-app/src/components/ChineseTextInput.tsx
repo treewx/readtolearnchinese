@@ -26,6 +26,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
   const [tooltipPosition, setTooltipPosition] = useState<{x: number, y: number} | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [autoSpeakEnabled, setAutoSpeakEnabled] = useState<boolean>(false);
   
   const { saveWord, getWordLevel } = useVocabulary();
   const { settings } = useDisplaySettings();
@@ -101,19 +102,19 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
     const rect = event.currentTarget.getBoundingClientRect();
     const position = {
       x: rect.left + rect.width / 2,
-      y: rect.top - 5  // Reduced gap from 10px to 5px for easier mouse movement
+      y: rect.bottom  // Position tooltip directly touching the tile with no gap
     };
     setTooltipPosition(position);
     setTooltipVisible(true);
   };
 
   const handleWordLeave = () => {
-    // Add a longer delay before hiding tooltip to allow clicking
+    // Keep popup open for 1 second to give time to move to tooltip
     const timeout = setTimeout(() => {
       setHoveredWord(null);
       setTooltipPosition(null);
       setTooltipVisible(false);
-    }, 1200); // 1200ms delay - even more time to move mouse to tooltip
+    }, 1000); // 1 second delay - enough time to move mouse to tooltip
     
     setHoverTimeout(timeout);
   };
@@ -133,8 +134,8 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
     setTooltipVisible(false);
   };
 
-  const handleSaveWord = (word: string, level: number) => {
-    saveWord(word, level);
+  const handleSaveWord = (word: string, level: number, pinyin?: string, translation?: string) => {
+    saveWord(word, level, pinyin, translation);
   };
 
   const handleGeneratedText = (generatedText: string) => {
@@ -186,6 +187,8 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
             text={inputText}
             words={segmentedWords.map(seg => seg.word)}
             className="text-speech-controls"
+            autoSpeakEnabled={autoSpeakEnabled}
+            onAutoSpeakChange={setAutoSpeakEnabled}
           />
           
           <div className="segmented-text">
@@ -243,7 +246,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
           style={{
             position: 'fixed',
             left: Math.max(10, Math.min(tooltipPosition.x - 140, window.innerWidth - 290)),
-            top: Math.max(10, tooltipPosition.y - 200), // Reduced from 220 to 200 for smaller gap
+            top: Math.max(10, tooltipPosition.y + 10), // Small gap below the tile
             zIndex: 1000,
             pointerEvents: 'auto'
           }}
@@ -255,6 +258,7 @@ const ChineseTextInput: React.FC<ChineseTextInputProps> = () => {
             wordInfo={segmentedWords[hoveredWord].wordInfo!}
             onSave={handleSaveWord}
             savedLevel={getWordLevel(segmentedWords[hoveredWord].word)}
+            autoSpeakEnabled={autoSpeakEnabled}
           />
         </div>
       )}

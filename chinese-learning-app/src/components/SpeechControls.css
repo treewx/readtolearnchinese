@@ -80,6 +80,40 @@
   animation: pulse-speaking 1.5s infinite;
 }
 
+.speech-button.auto-speak {
+  background-color: #9E9E9E;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.speech-button.auto-speak.enabled {
+  background-color: #4CAF50;
+  animation: pulse-enabled 2s infinite ease-in-out;
+}
+
+.speech-button.auto-speak.disabled {
+  background-color: #F44336;
+}
+
+.speech-button.auto-speak:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.speech-button.auto-speak.enabled:hover {
+  background-color: #45a049;
+}
+
+.speech-button.auto-speak.disabled:hover {
+  background-color: #e53935;
+}
+
+@keyframes pulse-enabled {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
 .speech-button.settings {
   background-color: #FF9800;
   color: white;

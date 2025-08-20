@@ -4,11 +4,13 @@ interface VocabularyWord {
   word: string;
   level: number;
   dateAdded: string;
+  pinyin?: string;
+  translation?: string;
 }
 
 interface VocabularyContextType {
   vocabulary: VocabularyWord[];
-  saveWord: (word: string, level: number) => void;
+  saveWord: (word: string, level: number, pinyin?: string, translation?: string) => void;
   removeWord: (word: string) => void;
   getWordLevel: (word: string) => number | undefined;
   getWordsByLevel: (level: number) => VocabularyWord[];
@@ -50,13 +52,15 @@ export const VocabularyProvider: React.FC<VocabularyProviderProps> = ({ children
     localStorage.setItem('chineseLearningVocabulary', JSON.stringify(vocabulary));
   }, [vocabulary]);
 
-  const saveWord = (word: string, level: number) => {
+  const saveWord = (word: string, level: number, pinyin?: string, translation?: string) => {
     setVocabulary(prev => {
       const existingIndex = prev.findIndex(item => item.word === word);
       const newWord: VocabularyWord = {
         word,
         level,
-        dateAdded: new Date().toISOString()
+        dateAdded: new Date().toISOString(),
+        pinyin,
+        translation
       };
 
       if (existingIndex !== -1) {

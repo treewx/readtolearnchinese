@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { WordInfo } from '../utils/pinyinTranslation';
 import { useSpeech } from '../hooks/useSpeech';
 import './WordTooltip.css';
@@ -6,16 +6,24 @@ import './WordTooltip.css';
 interface WordTooltipProps {
   word: string;
   wordInfo: WordInfo;
-  onSave?: (word: string, level: number) => void;
+  onSave?: (word: string, level: number, pinyin?: string, translation?: string) => void;
   savedLevel?: number;
+  autoSpeakEnabled?: boolean;
 }
 
-const WordTooltip: React.FC<WordTooltipProps> = ({ word, wordInfo, onSave, savedLevel }) => {
+const WordTooltip: React.FC<WordTooltipProps> = ({ word, wordInfo, onSave, savedLevel, autoSpeakEnabled }) => {
   const { speak, isSpeaking } = useSpeech();
+  
+  // Auto-speak when tooltip appears if enabled
+  useEffect(() => {
+    if (autoSpeakEnabled && wordInfo.word) {
+      speak(wordInfo.word, { rate: 0.7 });
+    }
+  }, [autoSpeakEnabled, wordInfo.word, speak]);
   
   const handleSaveWord = (level: number) => {
     if (onSave) {
-      onSave(word, level);
+      onSave(word, level, wordInfo.pinyin, wordInfo.translation);
     }
   };
 

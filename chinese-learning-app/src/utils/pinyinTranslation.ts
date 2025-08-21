@@ -602,12 +602,21 @@ export async function getWordInfo(word: string): Promise<WordInfo> {
   
   const pinyinString = pinyinResult.join(' ');
   
-  // Get translation - first check local dictionary
-  let translation = chineseDict[word];
+  // NEW APPROACH: Try DeepL API FIRST for best accuracy
+  let translation = await translateWithAPI(word);
   
-  // If not in dictionary, try API translation
+  // If API fails or returns empty, fall back to local dictionary
+  if (!translation || translation === 'No translation available') {
+    translation = chineseDict[word];
+  }
+  
+  // Final fallback to character breakdown or "No translation available"
   if (!translation) {
-    translation = await translateWithAPI(word);
+    if (word.length > 1) {
+      translation = getCharacterTranslations(word);
+    } else {
+      translation = 'No translation available';
+    }
   }
   
   return {
@@ -623,20 +632,17 @@ const DEEPL_BASE_URL = DEEPL_API_KEY && DEEPL_API_KEY.includes('fx')
   ? 'https://api-free.deepl.com/v2' 
   : 'https://api.deepl.com/v2';
 
-// Translation API service using DeepL
+// Translation API service using DeepL as PRIMARY source
 async function translateWithAPI(word: string): Promise<string> {
   // Check cache first
   if (translationCache[word]) {
     return translationCache[word];
   }
 
-  // For single characters, check local dictionary first but don't return early
-  // We want to try DeepL API if it's not in local dictionary
-
   // Skip API call if no API key is configured
   if (!DEEPL_API_KEY) {
-    console.warn('DeepL API key not configured, falling back to local dictionary');
-    return getCharacterTranslations(word);
+    console.warn('DeepL API key not configured, will use local dictionary fallback');
+    return ''; // Return empty string to trigger local dictionary fallback
   }
 
   // Rate limiting
@@ -666,7 +672,7 @@ async function translateWithAPI(word: string): Promise<string> {
     if (response.ok) {
       const data = await response.json();
       if (data.translations && data.translations.length > 0) {
-        const translation = data.translations[0].text;
+        const translation = data.translations[0].text.trim();
         
         // Basic validation for translation quality
         if (translation.toLowerCase() !== word.toLowerCase() && 
@@ -680,7 +686,7 @@ async function translateWithAPI(word: string): Promise<string> {
     } else if (response.status === 403) {
       console.warn('DeepL API: Authentication failed - check API key');
     } else if (response.status === 456) {
-      console.warn('DeepL API: Quota exceeded');
+      console.warn('DeepL API: Quota exceeded');  
     } else {
       console.warn('DeepL API failed with status:', response.status);
     }
@@ -688,8 +694,8 @@ async function translateWithAPI(word: string): Promise<string> {
     console.warn('DeepL API failed:', error);
   }
 
-  // Fallback to character-by-character translation
-  return getCharacterTranslations(word);
+  // Return empty string to trigger local dictionary fallback in main function
+  return '';
 }
 
 // For unknown words, try to provide character-by-character translation

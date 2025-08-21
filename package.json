@@ -1,0 +1,19 @@
+{
+  "name": "chinese-learning-app-monorepo",
+  "version": "1.0.0",
+  "description": "Chinese Learning App with PostgreSQL backend",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd chinese-learning-app && npm install",
+    "build": "cd backend && npm install"
+  },
+  "keywords": ["chinese", "learning", "postgresql", "react"],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
+}

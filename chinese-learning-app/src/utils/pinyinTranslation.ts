@@ -495,7 +495,95 @@ const chineseDict: { [key: string]: string } = {
   '真': 'real, true',
   '假': 'fake, false',
   '诚': 'sincere',
-  '实': 'real, solid'
+  '实': 'real, solid',
+  
+  // Very common characters that were missing
+  '过': 'pass, through, over, past',
+  '再': 'again, more',
+  '只': 'only, just',
+  '才': 'only then, just',
+  '而': 'and, but, while',
+  '以': 'with, by, in order to',
+  '及': 'and, reach',
+  '者': 'person, one who',
+  '其': 'his, her, its, that',
+  '此': 'this, here',
+  '些': 'some, these',
+  '每': 'every, each',
+  '各': 'each, every',
+  '另': 'another, other',
+  '某': 'certain, some',
+  '任': 'any, appoint',
+  '无': 'no, without',
+  '非': 'not, wrong',
+  '未': 'not yet',
+  '曾': 'once, ever',
+  '即': 'namely, at once',
+  '则': 'then, rule',
+  '否': 'no, whether',
+  '亦': 'also, too',
+  '乃': 'thus, then',
+  '至': 'to, until, most',
+  '由': 'by, from, due to',
+  '自': 'self, from',
+  '将': 'will, shall',
+  '令': 'make, cause, order',
+  '愿': 'wish, willing',
+  '希': 'hope',
+  '望': 'hope, look',
+  '待': 'wait, treat',
+  '准': 'accurate, allow',
+  '许': 'allow, perhaps',
+  '该': 'should, that',
+  '当': 'when, should',
+  '正': 'just, right',
+  '内': 'inside, within',
+  '外': 'outside, foreign',
+  '间': 'between, room',
+  '边': 'side, edge',
+  '旁': 'beside, side',
+  '侧': 'side',
+  '角': 'corner, angle',
+  '处': 'place, handle',
+  '所': 'place, that which',
+  '位': 'position, place',
+  '点': 'point, dot, o\'clock',
+  '面': 'face, surface',
+  '方': 'square, direction',
+  '道': 'way, path, say',
+  '路': 'road, way',
+  '街': 'street',
+  '巷': 'lane, alley',
+  '院': 'courtyard, hospital',
+  '楼': 'building, floor',
+  '层': 'layer, floor',
+  '室': 'room',
+  '厅': 'hall, living room',
+  '门': 'door, gate',
+  '窗': 'window',
+  '墙': 'wall',
+  '地': 'ground, place',
+  '土': 'soil, earth',
+  '石': 'stone',
+  '木': 'wood, tree',
+  '草': 'grass',
+  '花': 'flower',
+  '树': 'tree',
+  '山': 'mountain',
+  '水': 'water',
+  '火': 'fire',
+  '电': 'electricity',
+  '气': 'gas, air',
+  '风': 'wind',
+  '雨': 'rain',
+  '雪': 'snow',
+  '云': 'cloud',
+  '星': 'star',
+  '光': 'light',
+  '影': 'shadow',
+  '色': 'color',
+  '声': 'sound, voice',
+  '音': 'sound, music'
 };
 
 export interface WordInfo {
@@ -542,13 +630,8 @@ async function translateWithAPI(word: string): Promise<string> {
     return translationCache[word];
   }
 
-  // For single characters, prefer local dictionary first
-  if (word.length === 1) {
-    const characterTranslation = getCharacterTranslations(word);
-    if (characterTranslation !== 'No translation available') {
-      return characterTranslation;
-    }
-  }
+  // For single characters, check local dictionary first but don't return early
+  // We want to try DeepL API if it's not in local dictionary
 
   // Skip API call if no API key is configured
   if (!DEEPL_API_KEY) {

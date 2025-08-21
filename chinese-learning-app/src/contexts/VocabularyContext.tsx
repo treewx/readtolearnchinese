@@ -1,20 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-interface VocabularyWord {
-  word: string;
-  level: number;
-  dateAdded: string;
-  pinyin?: string;
-  translation?: string;
-}
+import { useAuth } from './AuthContext';
+import vocabularyService, { VocabularyWord } from '../services/vocabularyService';
 
 interface VocabularyContextType {
   vocabulary: VocabularyWord[];
-  saveWord: (word: string, level: number, pinyin?: string, translation?: string) => void;
-  removeWord: (word: string) => void;
+  saveWord: (word: string, level: number, pinyin?: string, translation?: string) => Promise<void>;
+  removeWord: (word: string) => Promise<void>;
   getWordLevel: (word: string) => number | undefined;
   getWordsByLevel: (level: number) => VocabularyWord[];
-  clearVocabulary: () => void;
+  clearVocabulary: () => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const VocabularyContext = createContext<VocabularyContextType | undefined>(undefined);
@@ -33,50 +29,78 @@ interface VocabularyProviderProps {
 
 export const VocabularyProvider: React.FC<VocabularyProviderProps> = ({ children }) => {
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user, isAuthenticated } = useAuth();
 
-  // Load vocabulary from localStorage on component mount
+  // Load vocabulary when user changes
   useEffect(() => {
-    const savedVocabulary = localStorage.getItem('chineseLearningVocabulary');
-    if (savedVocabulary) {
-      try {
-        const parsed = JSON.parse(savedVocabulary);
-        setVocabulary(parsed);
-      } catch (error) {
-        console.error('Error loading vocabulary from localStorage:', error);
+    const loadVocabulary = async () => {
+      if (isAuthenticated && user) {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const words = await vocabularyService.getAllVocabulary();
+          setVocabulary(words);
+        } catch (error: any) {
+          console.error('Error loading vocabulary:', error);
+          setError(error.message);
+          setVocabulary([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // Clear vocabulary when not authenticated
+        setVocabulary([]);
       }
+    };
+
+    loadVocabulary();
+  }, [user, isAuthenticated]);
+
+  const saveWord = async (word: string, level: number, pinyin?: string, translation?: string): Promise<void> => {
+    if (!isAuthenticated) {
+      throw new Error('Must be logged in to save words');
     }
-  }, []);
 
-  // Save vocabulary to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('chineseLearningVocabulary', JSON.stringify(vocabulary));
-  }, [vocabulary]);
-
-  const saveWord = (word: string, level: number, pinyin?: string, translation?: string) => {
-    setVocabulary(prev => {
-      const existingIndex = prev.findIndex(item => item.word === word);
-      const newWord: VocabularyWord = {
-        word,
-        level,
-        dateAdded: new Date().toISOString(),
-        pinyin,
-        translation
-      };
-
-      if (existingIndex !== -1) {
+    try {
+      setError(null);
+      
+      // Check if word already exists
+      const existingWordIndex = vocabulary.findIndex(item => item.word === word);
+      
+      if (existingWordIndex !== -1) {
         // Update existing word
-        const updated = [...prev];
-        updated[existingIndex] = newWord;
-        return updated;
+        const updatedWord = await vocabularyService.updateWord(word, { level, pinyin, translation });
+        setVocabulary(prev => {
+          const updated = [...prev];
+          updated[existingWordIndex] = updatedWord;
+          return updated;
+        });
       } else {
         // Add new word
-        return [...prev, newWord];
+        const newWord = await vocabularyService.addWord({ word, level, pinyin, translation });
+        setVocabulary(prev => [newWord, ...prev]);
       }
-    });
+    } catch (error: any) {
+      setError(error.message);
+      throw error;
+    }
   };
 
-  const removeWord = (word: string) => {
-    setVocabulary(prev => prev.filter(item => item.word !== word));
+  const removeWord = async (word: string): Promise<void> => {
+    if (!isAuthenticated) {
+      throw new Error('Must be logged in to remove words');
+    }
+
+    try {
+      setError(null);
+      await vocabularyService.deleteWord(word);
+      setVocabulary(prev => prev.filter(item => item.word !== word));
+    } catch (error: any) {
+      setError(error.message);
+      throw error;
+    }
   };
 
   const getWordLevel = (word: string): number | undefined => {
@@ -88,8 +112,19 @@ export const VocabularyProvider: React.FC<VocabularyProviderProps> = ({ children
     return vocabulary.filter(item => item.level === level);
   };
 
-  const clearVocabulary = () => {
-    setVocabulary([]);
+  const clearVocabulary = async (): Promise<void> => {
+    if (!isAuthenticated) {
+      throw new Error('Must be logged in to clear vocabulary');
+    }
+
+    try {
+      setError(null);
+      await vocabularyService.clearVocabulary();
+      setVocabulary([]);
+    } catch (error: any) {
+      setError(error.message);
+      throw error;
+    }
   };
 
   const value: VocabularyContextType = {
@@ -98,7 +133,9 @@ export const VocabularyProvider: React.FC<VocabularyProviderProps> = ({ children
     removeWord,
     getWordLevel,
     getWordsByLevel,
-    clearVocabulary
+    clearVocabulary,
+    isLoading,
+    error
   };
 
   return (

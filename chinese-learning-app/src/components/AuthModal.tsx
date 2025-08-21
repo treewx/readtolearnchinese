@@ -41,6 +41,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     try {
       if (isLogin) {
         // Login
+        if (username.length < 1) {
+          setError('Please enter your username or email');
+          setIsLoading(false);
+          return;
+        }
+
+        if (password.length < 1) {
+          setError('Please enter your password');
+          setIsLoading(false);
+          return;
+        }
+
         const success = await login(username, password);
         if (success) {
           onClose();
@@ -58,6 +70,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         if (password.length < 6) {
           setError('Password must be at least 6 characters long');
+          setIsLoading(false);
+          return;
+        }
+
+        if (username.length < 3) {
+          setError('Username must be at least 3 characters long');
+          setIsLoading(false);
+          return;
+        }
+
+        if (!email.includes('@') || email.length < 5) {
+          setError('Please enter a valid email address');
           setIsLoading(false);
           return;
         }

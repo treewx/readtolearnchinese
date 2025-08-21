@@ -400,7 +400,102 @@ const chineseDict: { [key: string]: string } = {
   '工资': 'wages',
   '奖金': 'bonus',
   '补贴': 'subsidy',
-  '津贴': 'allowance'
+  '津贴': 'allowance',
+  
+  // Additional common characters
+  '闲': 'idle, free time, leisure',
+  '忙': 'busy',
+  '累': 'tired',
+  '饿': 'hungry',
+  '渴': 'thirsty',
+  '困': 'sleepy, trapped',
+  '病': 'sick, illness',
+  '疼': 'pain, ache',
+  '疲': 'tired, exhausted',
+  '乏': 'tired, lacking',
+  '醉': 'drunk',
+  '醒': 'awake, sober',
+  '清': 'clear, clean',
+  '脏': 'dirty',
+  '净': 'clean, pure',
+  '满': 'full',
+  '空': 'empty, sky',
+  '够': 'enough',
+  '缺': 'lack, missing',
+  '剩': 'left over, remaining',
+  '存': 'exist, save',
+  '留': 'stay, remain',
+  '飞': 'fly',
+  '游': 'swim, tour',
+  '开': 'open, drive',
+  '关': 'close, shut',
+  '停': 'stop',
+  '始': 'begin, start',
+  '终': 'end, final',
+  '完': 'finish, complete',
+  '成': 'become, succeed',
+  '败': 'fail, defeat',
+  '胜': 'win, victory',
+  '输': 'lose, transport',
+  '赢': 'win',
+  '得': 'get, obtain',
+  '失': 'lose, miss',
+  '找': 'look for, find',
+  '寻': 'search, seek',
+  '发现': 'discover',
+  '丢': 'lose, throw away',
+  '拿': 'take, hold',
+  '放': 'put, place',
+  '举': 'lift, raise',
+  '拉': 'pull',
+  '推': 'push',
+  '扔': 'throw',
+  '打': 'hit, play',
+  '踢': 'kick',
+  '抓': 'grab, catch',
+  '握': 'hold, grasp',
+  '抱': 'hug, hold',
+  '亲': 'kiss, relatives',
+  '笑': 'laugh, smile',
+  '哭': 'cry',
+  '叫': 'call, shout',
+  '喊': 'shout, yell',
+  '唱': 'sing',
+  '跳': 'jump, dance',
+  '舞': 'dance',
+  '玩': 'play',
+  '睡觉': 'sleep',
+  '起床': 'get up',
+  '洗': 'wash',
+  '刷': 'brush',
+  '穿': 'wear, put on',
+  '脱': 'take off',
+  '换': 'change, exchange',
+  '试': 'try, test',
+  '练': 'practice',
+  '习': 'practice, study',
+  '教': 'teach',
+  '讲': 'speak, tell',
+  '告': 'tell, inform',
+  '诉': 'tell, complain',
+  '问': 'ask',
+  '答': 'answer',
+  '回': 'return, reply',
+  '应': 'answer, respond',
+  '忘': 'forget',
+  '记': 'remember, record',
+  '懂': 'understand',
+  '明白': 'understand, clear',
+  '糊涂': 'confused',
+  '清楚': 'clear',
+  '模糊': 'blurry, vague',
+  '正确': 'correct',
+  '错误': 'mistake, wrong',
+  '错': 'wrong, mistake',
+  '真': 'real, true',
+  '假': 'fake, false',
+  '诚': 'sincere',
+  '实': 'real, solid'
 };
 
 export interface WordInfo {
@@ -434,11 +529,31 @@ export async function getWordInfo(word: string): Promise<WordInfo> {
   };
 }
 
-// Translation API service
+// DeepL API configuration
+const DEEPL_API_KEY = process.env.REACT_APP_DEEPL_API_KEY;
+const DEEPL_BASE_URL = DEEPL_API_KEY && DEEPL_API_KEY.includes('fx') 
+  ? 'https://api-free.deepl.com/v2' 
+  : 'https://api.deepl.com/v2';
+
+// Translation API service using DeepL
 async function translateWithAPI(word: string): Promise<string> {
   // Check cache first
   if (translationCache[word]) {
     return translationCache[word];
+  }
+
+  // For single characters, prefer local dictionary first
+  if (word.length === 1) {
+    const characterTranslation = getCharacterTranslations(word);
+    if (characterTranslation !== 'No translation available') {
+      return characterTranslation;
+    }
+  }
+
+  // Skip API call if no API key is configured
+  if (!DEEPL_API_KEY) {
+    console.warn('DeepL API key not configured, falling back to local dictionary');
+    return getCharacterTranslations(word);
   }
 
   // Rate limiting
@@ -450,56 +565,47 @@ async function translateWithAPI(word: string): Promise<string> {
   lastAPICall = Date.now();
 
   try {
-    // Try MyMemory Translation API (free, no API key required)
-    const response = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=zh|en`
-    );
-    
+    // Use DeepL API for accurate Chinese translation
+    const formData = new URLSearchParams();
+    formData.append('text', word);
+    formData.append('source_lang', 'ZH');
+    formData.append('target_lang', 'EN');
+
+    const response = await fetch(`${DEEPL_BASE_URL}/translate`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData
+    });
+
     if (response.ok) {
       const data = await response.json();
-      if (data.responseStatus === 200 && data.responseData?.translatedText) {
-        const translation = data.responseData.translatedText;
-        // Filter out obviously bad translations
+      if (data.translations && data.translations.length > 0) {
+        const translation = data.translations[0].text;
+        
+        // Basic validation for translation quality
         if (translation.toLowerCase() !== word.toLowerCase() && 
-            !translation.includes('MYMEMORY WARNING') &&
-            translation.length > 0) {
+            translation.length > 0 && 
+            translation.length < 200) {
           // Cache the successful translation
           translationCache[word] = translation;
           return translation;
         }
       }
+    } else if (response.status === 403) {
+      console.warn('DeepL API: Authentication failed - check API key');
+    } else if (response.status === 456) {
+      console.warn('DeepL API: Quota exceeded');
+    } else {
+      console.warn('DeepL API failed with status:', response.status);
     }
   } catch (error) {
-    console.warn('MyMemory API failed:', error);
+    console.warn('DeepL API failed:', error);
   }
 
-  try {
-    // Fallback to LibreTranslate public instance
-    const response = await fetch('https://libretranslate.de/translate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        q: word,
-        source: 'zh',
-        target: 'en',
-      }),
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      if (data.translatedText && data.translatedText.toLowerCase() !== word.toLowerCase()) {
-        // Cache the successful translation
-        translationCache[word] = data.translatedText;
-        return data.translatedText;
-      }
-    }
-  } catch (error) {
-    console.warn('LibreTranslate API failed:', error);
-  }
-
-  // Final fallback to character-by-character translation
+  // Fallback to character-by-character translation
   return getCharacterTranslations(word);
 }
 
